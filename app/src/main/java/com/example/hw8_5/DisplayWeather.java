@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -19,6 +21,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Locale;
+
 public class DisplayWeather extends AppCompatActivity {
     public static final String CUR_LAT = "com.example.myweatherapp.LATITUDE";
     public static final String CUR_LON = "com.example.myweatherapp.LONGITUDE";
@@ -26,8 +30,10 @@ public class DisplayWeather extends AppCompatActivity {
     TextView test;
     TextView winfo;
     Button mapbtn;
+    ImageButton ttsbtn;
     String url;
     JSONObject jsonresp;
+    TextToSpeech tts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +48,24 @@ public class DisplayWeather extends AppCompatActivity {
         test =  (TextView) findViewById(R.id.output);
         winfo = (TextView) findViewById(R.id.weatherinfo);
         mapbtn = (Button) findViewById(R.id.getmap);
+        ttsbtn = (ImageButton) findViewById(R.id.tsbtn);
+
+        tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status != TextToSpeech.ERROR) {
+                    tts.setLanguage(Locale.US);
+                }
+            }
+        });
+
+        ttsbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String tospeak = test.getText().toString() + " " + winfo.getText().toString();
+                tts.speak(tospeak, TextToSpeech.QUEUE_FLUSH, null);
+            }
+        });
 
         Intent intent = getIntent();
 
@@ -153,5 +177,13 @@ public class DisplayWeather extends AppCompatActivity {
             return false;
         }
         return true;
+    }
+
+    public void onPause(){
+        if(tts !=null){
+            tts.stop();
+            tts.shutdown();
+        }
+        super.onPause();
     }
 }
