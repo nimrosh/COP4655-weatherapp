@@ -1,10 +1,12 @@
 package com.example.hw8_5;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -16,6 +18,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,6 +37,7 @@ public class DisplayWeather extends AppCompatActivity {
     ImageButton ttsbtn;
     String url;
     JSONObject jsonresp;
+    BottomNavigationView bottomnav;
     TextToSpeech tts;
 
     @Override
@@ -47,8 +52,9 @@ public class DisplayWeather extends AppCompatActivity {
 
         test =  (TextView) findViewById(R.id.output);
         winfo = (TextView) findViewById(R.id.weatherinfo);
-        mapbtn = (Button) findViewById(R.id.getmap);
         ttsbtn = (ImageButton) findViewById(R.id.tsbtn);
+        bottomnav = (BottomNavigationView) findViewById(R.id.bottom_navigation);
+
 
         tts = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
@@ -151,9 +157,21 @@ public class DisplayWeather extends AppCompatActivity {
         });
         queue.add(stringRequest);
 
+        bottomnav.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.wmap:
+                        displayMap();
+                        break;
+                }
+                return true;
+            }
+        });
+
     }
 
-    public void displayMap(View view) {
+    public void displayMap() {
         try {
             JSONObject coord = jsonresp.getJSONObject("coord");
             Intent intent = new Intent(this, GoogleMaps.class);
