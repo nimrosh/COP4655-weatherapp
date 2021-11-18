@@ -164,6 +164,9 @@ public class DisplayWeather extends AppCompatActivity {
                     case R.id.wmap:
                         displayMap();
                         break;
+                    case R.id.history:
+                        displayHistory();
+                        break;
                 }
                 return true;
             }
@@ -175,6 +178,20 @@ public class DisplayWeather extends AppCompatActivity {
         try {
             JSONObject coord = jsonresp.getJSONObject("coord");
             Intent intent = new Intent(this, GoogleMaps.class);
+            Double lat = coord.getDouble("lat");
+            Double lon = coord.getDouble("lon");
+            intent.putExtra(CUR_LAT, lat.toString());
+            intent.putExtra(CUR_LON, lon.toString());
+            startActivity(intent);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void displayHistory() {
+        try {
+            JSONObject coord = jsonresp.getJSONObject("coord");
+            Intent intent = new Intent(this, WeatherHistory.class);
             Double lat = coord.getDouble("lat");
             Double lon = coord.getDouble("lon");
             intent.putExtra(CUR_LAT, lat.toString());
